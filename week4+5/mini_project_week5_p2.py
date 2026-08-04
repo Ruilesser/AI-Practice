@@ -10,7 +10,7 @@ from sklearn.neighbors import KNeighborsClassifier
 
 # PART 2
 # Load Telco customer churn dataset
-df_telco = pd.read_csv('Telco-Customer-Churn.csv')
+df_telco = pd.read_csv('week4+5/Telco-Customer-Churn.csv')
 
 # Inspect the dataset
 #print(df_telco.info())
