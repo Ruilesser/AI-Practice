@@ -33,4 +33,3 @@ sns.histplot(x, kde=True, label="Uniform", color="red")
 plt.title("Probability Distributions")
 plt.legend()
 plt.show()
-
