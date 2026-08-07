@@ -1,1 +1,4 @@
 /catboost_info
+/data
+mnist_classifier.h5
+mnist_model.pth
