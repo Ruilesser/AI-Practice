@@ -1,0 +1,383 @@
+from sklearn.linear_model import LinearRegression, LogisticRegression, KNeighborsClassifier
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error, accuracy_score, confusion_matrix
+from sklearn.svm import SVC
+import numpy as np
+import matplotlib.pyplot as plt
+
+Linear regression
+    sklearn
+    model = LinearRegression()
+    model.fit(X_train, y_train) - use train test split
+    y_pred = model.predict(X_test)
+    mse = mean_squared_error(y_test, y_pred)
+
+Ridge and lasso regression
+    ridge_model = Ridge(alpha=1.0) # alpha is regularization strength
+    ridge_model.fit(X_train, y_train)
+    ridge_pred = ridge_model.predict(X_test)
+    ridge_mse = mean_squared_error(y_test, ridge_pred)
+
+    lasso_model = Lasso(alpha=0.1)
+    lasso_model.fit(X_train, y_train)
+    lasso_pred = lasso_model.predict(X_test)
+    lasso_mse = mean_squared_error(y_test, lasso_pred)
+
+Polynomial regression
+    from sklearn.preprocessing import PolynomialFeatures
+    poly = PolynomialFeatures(degree=2) - degree of polynomial
+    X_train_poly = poly.fit_transform(X_train)
+    X_test_poly = poly.transform(X_test)
+
+    model = LinearRegression()
+    model.fit(X_train_poly, y_train)
+
+    # Make predictions
+    y_pred = model.predict(X_test_poly)
+    mse = mean_squared_error(y_test, y_pred)
+
+Logistic Regression
+    typically used for binary classification
+    model = LogisticRegression()
+    model.fit(X_train, y_train)
+    y_pred = model.predict(X_test)
+
+    #Evaluate model
+    accuracy = accuracy_score(y_test, y_pred)
+    conf_matrix = confusion_matrix(y_test, y_pred)
+
+K-Nearest Neighbours
+    Useful in smaller datasets where relationships among datapoints is easy to visualize
+    Classifies new data based on majority of nearby points (k)
+
+    model = KNeighborsClassifier(n_neighbors=3)
+    model.fit(X_train, y_train)
+
+    y_pred = model.predict(X_test)
+    accuracy = accuracy_score(y_test, y_pred)
+    conf_matrix = confusion_matrix(y_test, y_pred)
+
+Support Vector Machines
+    Classification algorithm finds hyperplane which separates classes in feature space
+    Maximizes margin between classes - binary classification
+
+    model = SVC(kernel='linear') # 'linear' kernel for linear classification
+    model.fit(X_train, y_train)
+    ...
+
+Decision Trees
+    Supervised learning algorithm
+    Used for both classification and regression
+    Split into subsets based on features - each leaf node is a prediction
+
+    from sklearn.tree import DecisionTreeClassifier
+
+    model = DecisionTreeClassifier()
+    ...
+
+Random Forest
+    Ensemble learning method
+    Multiple decision trees
+    Each tree in forest is trained on random subset of data and final prediction is avg (regression)
+    or voting (classification) predictions of individual trees
+    Reduce overfitting and improve generalization
+
+    from sklearn.ensemble import RandomForestClassifier
+
+    model = RandomForestClassifier(n_estimators=100, random_state=42) # n_estimators is number of decision trees
+    # random state is for reproducibility
+
+Gradient Boosting
+    Ensemble technique - builds decision trees with each tree correcting the previous one's errors
+    Combining the predictions of trees create a better final prediction
+
+    from sklearn.ensemble import GradientBoostingClassifier
+
+    model = GradientBoostingClassifier(n_estimators=100, learning_rate=0.1, random_state=42)
+    # n_estimators is number of boosting stages (trees)
+    # learning_rate is contribution of each tree to the result
+    ...
+
+Naive Bayes
+    Baye's theorem, assumes features are conditionally indepentent given the class label
+    Performs well for text classification and spam detection
+
+    from sklearn.naive_bayes import GaussianNB
+    model = GaussianNB()
+    # assumes each feature is normally distributed and will calculate probabilities based on this
+    ...
+
+K-Means Clustering
+    Unsupervised learning that partitions data into k clusters
+    Cluster is defined by its centroid - data points assigned to nearest cluster
+    Algorithm iteratively adjusts centroids to minimize variance
+
+    from sklearn.cluster import KMeans
+    
+    kmeans = KMeans(n_clusters=2, random_state=42) # number of clusters is 2
+    kmeans.fit(X) # fits to data X = np.array([[1, 2], [1, 4], [1, 0], [10, 2]])
+
+    # Get the cluster centes and labels
+    centroids = kmeans.cluster_centers_
+    labels = kmeans.labels_
+
+Hierarchical Clustering
+    Unsupervised learning
+    Builds a hierarchy of clusters
+    Starts with each datapoint as its own cluster and then merges or splits based on distance
+    -> Tree like structure called a dendrogram - can cut tree at specific level
+
+    from scipy.cluster.hierarchy import dendrogram, linkage
+
+    # Perform hierarchical/agglomerative clustering
+    Z = linkage(X, method='ward') # 'ward' minimizes variance within clusters - is an array
+
+    # Plot dendrogram
+    plt.figure(figsize=(8, 4))
+    dendrogram(Z)
+    plt.title("Dendrogram for Hierarchical Clustering")
+    plt.xlabel("Data Points")
+    plt.ylabel("Distance")
+    plt.show()
+
+DBSCAN
+    Unsupervised clustering algorithm that groups data points based on density
+    Good at identifying cluster of arbitrary shapes and handling outliers (noise)
+    Requires two parameters: eps (max distance between two poitns to be considered neighbors)
+    min_samples (minimum number of points required to form a dense region)
+
+    from sklearn.cluster import DBSCAN
+    dbscan = DBSCAN(eps=3, min_samples=2)
+    dbscan.fit(X)
+    labels = dbscan.labels_
+
+Gaussian Mixture Models
+    Probabilistic clustering algorithm
+    Assumes data poitns are generated from a mixture of several Gaussian distributions with unknown parameters
+    Assigns probability to each data point for belonging to each cluster - soft clustering
+    Useful for different shape or density clusters
+
+    from sklearn.mixture import GaussianMixture
+
+    gmm = GaussianMixture(n_components=2, random_state=42)
+    gmm.fit(X)
+
+    # Get the cluster labels and probabilities
+    labels = gmm.predict(X) # assigns each data point to the cluster the highest probability
+    probs = gmm.predict_proba(X) # probability point belongs in its cluster
+    
+Principal Component Analysis
+    Dimensionality reduction technique
+    Transform high-dimensional dataset to a lower-dimensional one by identifying directions (principal components)
+    that capture the maximum variance in the data
+    Used for data visualization, noise reduction, speeding up ML algorithms by reducing features
+
+    from sklearn.decomposition import PCA
+    
+    pca = PCA(n_components=2) # Reducing to 2 dimensions (3D to 2D) if given array of points in 3D space
+    X_reduced = pca.fit_transform(X)
+    print("Explained Variance Ratio:", pca.explained_variance_ratio_) # how much total variance is captured
+
+t-Distributed Stochastic Neighbor Embedding
+    Dimensionality reduction technique
+    Visualizing high dimensional data in 2D or 3D
+    Non-linear and focuses on preserving local structure of data
+    Effective for clusters but computationally intensive
+
+    from sklearn.manifold import TSNE
+
+    tsne = TSNE(n_components=2, perplexity=5, random_state=42) # Reducing to 2D for visualization
+    # perplexity is a parameter that controls local and global embedding (5-50)
+    X_reduced = tsne.fit_transform(X)
+
+Autoencoders
+    Neural networks for unsupervised learning
+    Specifically for dimensionality reduction and feature extraction
+    Encoding input data into compressed representation then reconstructing original input from representation
+    Useful for denoising, anomaly detection, and pretraining
+
+    from tensorflow.keras.models import Model
+    from tensorflow.kears.layers import Input, Dense
+    import numpy as np
+
+    # Give sample data (points in 5 dimensional space)
+
+    # Define autoencoder model
+    input_dim = X.shape[1]
+    encoding_dim = 2 # compressing to 2 dimensions
+
+    # Encoder
+    input_layer = Input(shape=(input_dim,))
+    encoded = Dense(encoding_dim, activation='relu')(input_layer)
+
+    # Decoder
+    decoded = Dense(input_dim, activation='sigmoid')(encoded)
+
+    # Autoencoder model
+    autoencoder = Model(input_layer, decoded)
+
+    # Compile the model
+    autoencoder.compile(optimizer='adam', loss='mse')
+
+    # Train the model
+    autoencoder.fit(X, X, epochs=100, batch_size=2, verbose=0) # batch_size 2 samples at the same time
+    # verbose=0 surpresses output of training progress
+
+    # Get the encoded (compressed) representation
+    encoder = Model(input_layer, encoded)
+    X_compressed = encoder.predict(X) # 2D representation
+
+Self-Training
+    Semi-supervised learning approach that leverages a small labeled dataset alongside a larger
+    unlabeled dataset
+    Model initially trained on labeled data and then makes predictions on unlabeled data
+    Confident predictions (high certainty) are added to labeled dataset
+    Process repeats
+
+    from sklearn.ensemble import RandomForestClassifier
+    from sklearn.datasets import make_classification
+    from sklearn.model_selection import train_test_split
+
+    X, y = make_classification(n_samples=200, n_features=5, random_state=42)
+    X_labeled, X_unlabeled, y_labeled, _ = train_test_split(X, y, test_size=0.7, random_state=42)
+
+    # Initialize and train the model with labeled data
+    model = RandomForestClassifier(random_state=42)
+    model.fit(X_labeled, y_labeled)
+
+    # Perform self-training on unlabeled data
+    for _ in range(5): # Repeat 5 times
+        # Predict probabilities on the unlabeled data
+        probs = model.predict_proba(X_unlabeled)
+        high_confidence_idx = np.where(np.max(probs, axis=1) > 0.9)[0]
+
+        # Add high-confidence predictions to labeled data
+        X_labeled = np.vstack([X_labeled, X_unlabeled[high_confidence_idx]])
+        y_labeled = np.hstack([y_labeled, model.predict(X_unlabeled[high_confidence_idx])])
+
+        # Remove confident samples from the unlabeled dataset
+        X_unlabeled = np.delete(X_unlabeled, high_confidence_idx, axis=0)
+
+        # Retrain model on expanded labeled dataset
+        model.fit(X_labeled, y_labeled)
+    
+    # Final Evaluate
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+    model.fit(X_train, y_train)
+    y_pred = model.predict(X_test)
+    accuracy = accuracy_score(y_test, y_pred)
+
+Q learning
+    Model-free reinforcement learning algorithm to find optimal action-selection policy
+    Learns by interacting with an environment and updating a Q-table
+    Effective when environment can be modeled as discrete states
+
+    import numpy as np
+    import random
+
+    # Define environment (4x4 grid)
+    num_states = 16 # 4x4 grid 
+    num_actions = 4 # up, down, left, right
+    q_table = np.zeros((num_states, num_actions))
+
+    # Define parameters
+    alpha = 0.1 # Learning rate
+    gamme = 0.9 # discount factor - how much weight future awards
+    epsilon = 0.2 # exploration rate (random action)
+    num_episodes = 1000
+
+    # Define simple reward structure
+    rewards = np.zeros(num_states)
+    rewards[15] = 1 # Goal state with a reward
+
+    # Function to determine the next state based on the action
+    def get_next_state(state, action):
+        if action == 0 and state >= 4:
+            return state - 4 # up
+        elif action == 1 and (state _ 1) % 4 != 0:
+            return state + 1 # right
+        elif action == 2 and state < 12:
+            return state + 4 # down
+        elif action == 3 and state % 4 != 0:
+            return state - 1 # left
+        else:
+            return state
+
+    # Q-learning algorithm
+    for episode in range(num_episodes):
+        state = random.randint(0, num_states - 1) # start from random state 
+        while state != 15: # Loop until reaching goal
+            if random.uniform(0, 1) < epsilon:
+                action = random.randint(0, num_actions-1)
+            else:
+                action = np.argmax(q_table[state])
+            
+            next_state = get_next_state(state, action)
+            reward = rewards[next_state]
+            old_value = q_table[state, action]
+            next_max = np.max(q_table[next_state])
+
+            # Q-learning update rule
+            new_value = old_value + alpha * (reward + gamma * next_max - old_value)
+            q_table[state, action] = new_value
+
+            state = next_state
+
+Deep Q-Networks
+    Deep Q-Networks is a reinforcement learning algorithm
+    Combines Q-learning with a deep neural network
+    Uses NN to approximate Q-values for each action in given state
+    Can handle high-dimensional environments and continuos state spaces
+
+Policy Gradient Methods
+    Reinforcement learning
+    Learn a policy by optimizing the parameters of a policy network
+    Finding policy that leads to max of rewards
+
+One-Class SVM
+    anomaly detection algorithm - identifies differing points
+    Separates into high-density and sparse regions
+
+    from sklearn.svm import OneClassSVM
+    model = OneClassSVM(gamma='auto', nu=0.1) # nu is upper bound of noise
+    model.fit(X_train)
+
+
+Isolation Forest
+    Ensemble method for identifying anomalies
+    Selects random feature and a split value to partition data
+    Creating trees where anomalies are easier to isolate
+    
+    from sklearn.ensemble import IsolationForest
+    model = IsolationForest(contamination=0.1, random_state=42) # contamination is estimation of how much noise
+
+
+Convolutional Neural Networks (CNNs)
+    Deep learning models designed for processing structured grid data like images
+    Apply filter to input image to get spatial hierarchies and features like edges, textures and shapes
+    Computer vision tasks
+    
+    import tensorflow as tf
+    from tensorflow.keras import layers, models
+    from tensorflow.keras.datasets import mnist
+
+Recurrent Neural Networks
+    NN designed for sequential data such as time series, language or speech
+    Text generation and language prediction
+
+    import tensorflow as tf
+    from tensorflow.keras import layers, models
+    from tensorflow.keras.datasets import mnist
+    from tensorflow.keras.preprocessing import sequence
+
+Long Short-Term Memory
+    Type of RNN designed to capture long term dependencies in sequential data
+    Used for language modeling, machine translation and time series prediction
+
+Transformers
+    Deep learning architectures designed for handling sequential data without relying on recurrence in RNNs
+    Instead uses self-attention to process all tokens in the sequence simultaneously
+    Captures dependencies between tokens regardless
+
+    Foundation of BERT and GPT
